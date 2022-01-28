@@ -1,0 +1,12 @@
+apiVersion: webhookconfig.keptn.sh/v1alpha1
+kind: WebhookConfig
+metadata:
+  name: webhook-configuration
+spec:
+  webhooks:
+    - type: sh.keptn.event.mytask-interactive.triggered
+      requests:
+        - curl --request POST --data
+          '{"event":"{{.type}}","stage":"{{.data.stage}}","shkeptncontext":"{{.shkeptncontext}}","id":"{{.id}}"}'
+          https://webhook.site/0b6f1693-9de4-45f2-87d6-3eedd93cf1e4
+      subscriptionID: 3db38df9-b06b-4185-a9f0-841b0f6e9165
