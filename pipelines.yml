@@ -34,7 +34,6 @@ pipelines:
                 $KEPTN_AUTOMATION_IMAGE \
                 slo-evaluation.sh
 
-    steps:
     - name: slo_quality_gate_with_mount
       type: Bash
       configuration:
