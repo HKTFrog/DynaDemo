@@ -69,6 +69,5 @@ pipelines:
                   --env KEPTN_SERVICE=$KEPTN_SERVICE \
                   --env KEPTN_STAGE=$KEPTN_STAGE \
                   --env LABELS=“JfrogRunId=$run_id,executedBy=Jfrog,Jfrog=$step_url” \
-                  $KEPTN_AUTOMATION_IMAGE \
-                  slo-evaluation.sh)
+                  $KEPTN_AUTOMATION_IMAGE)
             - echo "RESULT = $RESULT"
