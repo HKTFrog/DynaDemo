@@ -1,5 +1,5 @@
 resources:
-  - name: myIWH
+  - name: incoming_webhook
     type: IncomingWebhook
     configuration:
       webhookName: MyIncomingWebhookIntegration
@@ -21,7 +21,7 @@ pipelines:
         configuration:
           affinityGroup: Cloud_Automation_Interative_Webhook
           inputResources:
-            - name: myIWH
+            - name: incoming_webhook
         execution:
           onExecute:
             - echo "$res_myIWH_payload" | jq '.' > payload.json
