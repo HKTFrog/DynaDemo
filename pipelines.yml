@@ -1,3 +1,9 @@
+resources:
+  - name: myIWH
+    type: IncomingWebhook
+    configuration:
+      webhookName: MyIncomingWebhookIntegration
+
 pipelines:
   - name: slo_pipeline
     configuration:
@@ -9,55 +15,87 @@ pipelines:
           KEPTN_AUTOMATION_IMAGE: "dtdemos/keptn-automation:0.2.1"
 
     steps:
-    - name: slo_quality_gate
-      type: Bash
-      configuration:
-        environmentVariables:
-          LABELS: "runId=$run_id,executedBy=Jfrog,Job=$step_url"
-          EVALUATION_RULE: "pass_on_warning"
-        affinityGroup: slo_quality_gate
-        integrations:
-          - name: DynaCred
-        inputSteps:
-          - name: Send_Finish_Event
-      execution:
-        onExecute:
-          - |
-            docker run  \
-                --env EVALUATION_RULE=$EVALUATION_RULE \
-                --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
-                --env KEPTN_API_TOKEN=$int_DynaCred_API_TOKEN \
-                --env KEPTN_PROJECT=$KEPTN_PROJECT \
-                --env KEPTN_SERVICE=$KEPTN_SERVICE \
-                --env KEPTN_STAGE=$KEPTN_STAGE \
-                --env LABELS=$LABELS \
-                $KEPTN_AUTOMATION_IMAGE \
-                slo-evaluation.sh
 
-    - name: slo_quality_gate_with_mount
-      type: Bash
-      configuration:
-        environmentVariables:
-          LABELS: "runId=$run_id,executedBy=Jfrog,Job=$step_url"
-          EVALUATION_RULE: "pass_on_warning"
-        affinityGroup: slo_quality_gate
-        integrations:
-          - name: DynaCred
-        inputSteps:
-          - name: Send_Finish_Event
-      execution:
-        onExecute:
-          - |
-            docker run  \
-                --env EVALUATION_RULE=$EVALUATION_RULE \
-                --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
-                --env KEPTN_API_TOKEN=$int_DynaCred_API_TOKEN \
-                --env KEPTN_PROJECT=$KEPTN_PROJECT \
-                --env KEPTN_SERVICE=$KEPTN_SERVICE \
-                --env KEPTN_STAGE=$KEPTN_STAGE \
-                --env LABELS=$LABELS \
-                -v $res_gitRepo_resourcePath:/slo_result \
-                $KEPTN_AUTOMATION_IMAGE \
-                slo-evaluation.sh
-            echo "Show slo-evaluation-result.json"
-            cat slo-evaluation-result.json
+      - name: Processing_Incoming_Webhook
+        type: Bash
+        configuration:
+          affinityGroup: Cloud_Automation_Interative_Webhook
+          inputResources:
+            - name: myIWH
+        execution:
+          onExecute:
+            - echo "$res_myIWH_payload" | jq '.' > payload.json
+            - |
+              add_run_variables my_payload="$(jq -n \
+              --arg pr $(read_json payload.json "project") \
+              --arg st $(read_json payload.json "stage") \
+              --arg sv $(read_json payload.json "service") \
+              --arg sh $(read_json payload.json "shkeptncontext") \
+              --arg id $(read_json payload.json "id") \
+              '{data:{project:$pr,stage:$st,service:$sv,status:"succeeded",result:"pass"},source:"cas-quickstart",specversion:"1.0",type:"sh.keptn.event.mytask-interactive.finished",shkeptncontext:$sh,triggeredid:$id}')"
+            - echo "$my_payload"
+
+      - name: Send_Finish_Event
+        type: Bash
+        configuration:
+          affinityGroup: Cloud_Automation_Interative_Webhook
+          integrations:
+            - name: DynaCred
+          inputSteps:
+            - name: Processing_Incoming_Webhook
+        execution:
+          onExecute:
+            - 'curl -X POST "$int_DynaCred_BASE_URL/api/v1/event" -H "accept: application/json" -H "x-token: $int_DynaCred_API_TOKEN" -H "Content-Type: application/json" -d "$my_payload"'
+
+      - name: slo_quality_gate
+        type: Bash
+        configuration:
+          environmentVariables:
+            LABELS: "runId=$run_id,executedBy=Jfrog,Job=$step_url"
+            EVALUATION_RULE: "pass_on_warning"
+          affinityGroup: slo_quality_gate
+          integrations:
+            - name: DynaCred
+          inputSteps:
+            - name: Send_Finish_Event
+        execution:
+          onExecute:
+            - |
+              docker run  \
+                  --env EVALUATION_RULE=$EVALUATION_RULE \
+                  --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
+                  --env KEPTN_API_TOKEN=$int_DynaCred_API_TOKEN \
+                  --env KEPTN_PROJECT=$KEPTN_PROJECT \
+                  --env KEPTN_SERVICE=$KEPTN_SERVICE \
+                  --env KEPTN_STAGE=$KEPTN_STAGE \
+                  --env LABELS=$LABELS \
+                  $KEPTN_AUTOMATION_IMAGE \
+                  slo-evaluation.sh
+
+      - name: slo_quality_gate_with_mount
+        type: Bash
+        configuration:
+          environmentVariables:
+            LABELS: "runId=$run_id,executedBy=Jfrog,Job=$step_url"
+            EVALUATION_RULE: "pass_on_warning"
+          affinityGroup: slo_quality_gate
+          integrations:
+            - name: DynaCred
+          inputSteps:
+            - name: Send_Finish_Event
+        execution:
+          onExecute:
+            - |
+              docker run  \
+                  --env EVALUATION_RULE=$EVALUATION_RULE \
+                  --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
+                  --env KEPTN_API_TOKEN=$int_DynaCred_API_TOKEN \
+                  --env KEPTN_PROJECT=$KEPTN_PROJECT \
+                  --env KEPTN_SERVICE=$KEPTN_SERVICE \
+                  --env KEPTN_STAGE=$KEPTN_STAGE \
+                  --env LABELS=$LABELS \
+                  -v $res_gitRepo_resourcePath:/slo_result \
+                  $KEPTN_AUTOMATION_IMAGE \
+                  slo-evaluation.sh
+              echo "Show slo-evaluation-result.json"
+              cat slo-evaluation-result.json
