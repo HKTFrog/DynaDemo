@@ -1,12 +1,12 @@
 pipelines:
   - name: slo_pipeline
     configuration:
-    environmentVariables:
-      readOnly:
-        KEPTN_PROJECT: "demo"
-        KEPTN_SERVICE: "casdemoapp"
-        KEPTN_STAGE: "production"
-        KEPTN_AUTOMATION_IMAGE: "dtdemos/keptn-automation:0.2.1"
+      environmentVariables:
+        readOnly:
+          KEPTN_PROJECT: "demo"
+          KEPTN_SERVICE: "casdemoapp"
+          KEPTN_STAGE: "production"
+          KEPTN_AUTOMATION_IMAGE: "dtdemos/keptn-automation:0.2.1"
 
     steps:
     - name: slo_quality_gate
