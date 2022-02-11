@@ -64,7 +64,7 @@ pipelines:
               RESULT=$(docker run  \
                   --env EVALUATION_RULE=$EVALUATION_RULE \
                   --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
-                  --env KEPTN_API_TOKEN=$int_keptnCred_API_TOKEN \
+                  --env KEPTN_API_TOKEN=$int_DynaCred_API_TOKEN \
                   --env KEPTN_PROJECT=$KEPTN_PROJECT \
                   --env KEPTN_SERVICE=$KEPTN_SERVICE \
                   --env KEPTN_STAGE=$KEPTN_STAGE \
