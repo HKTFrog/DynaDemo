@@ -63,12 +63,12 @@ pipelines:
             - |
               RESULT=$(docker run  \
                   --env EVALUATION_RULE=$EVALUATION_RULE \
-                  --env KEPTN_BASE_URL=$int_keptnCred_BASE_URL \
+                  --env KEPTN_BASE_URL=$int_DynaCred_BASE_URL \
                   --env KEPTN_API_TOKEN=$int_keptnCred_API_TOKEN \
                   --env KEPTN_PROJECT=$KEPTN_PROJECT \
                   --env KEPTN_SERVICE=$KEPTN_SERVICE \
                   --env KEPTN_STAGE=$KEPTN_STAGE \
-                  --env LABELS=$LABELS \
+                  --env LABELS=“JfrogRunId=$run_id,executedBy=Jfrog,Jfrog=$step_url” \
                   $KEPTN_AUTOMATION_IMAGE \
                   slo-evaluation.sh)
             - echo "RESULT = $RESULT"
