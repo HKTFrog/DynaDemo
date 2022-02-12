@@ -1,1 +1,31 @@
-Hello World!
+pipelines:
+  - name: conditional_pipeline
+    steps:
+
+      - name: slo_evaluation
+        type: Bash
+        configuration:
+          inputResources:
+            - name: incoming_webhook
+        execution:
+          onExecute:
+
+      - name: manual_approval
+        type: Bash
+        configuration:
+          inputSteps:
+            - name: slo_evaluation
+              status:
+                - success
+        execution:
+          onExecute:
+
+      - name: promote_build
+        type: Bash
+        configuration:
+          inputSteps:
+            - name: slo_evaluation
+              status:
+                - success
+        execution:
+          onExecute:
