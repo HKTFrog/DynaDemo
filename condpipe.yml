@@ -9,7 +9,7 @@ pipelines:
             - name: incoming_webhook
         execution:
           onExecute:
-            - echo 'step: slo_evaluation'
+            - echo "step - slo_evaluation"
 
       - name: manual_approval
         type: Bash
@@ -20,7 +20,7 @@ pipelines:
                 - success
         execution:
           onExecute:
-            - echo 'step: manual_approval'
+            - echo "step - manual_approval"
 
       - name: promote_build
         type: Bash
@@ -31,4 +31,4 @@ pipelines:
                 - success
         execution:
           onExecute:
-            - echo 'step: promote_build'
+            - echo "step - promote_build"
