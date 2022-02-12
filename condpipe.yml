@@ -14,10 +14,11 @@ pipelines:
       - name: manual_approval
         type: Bash
         configuration:
+          requiresApproval: true
           inputSteps:
             - name: slo_evaluation
               status:
-                - success
+                - unstable
         execution:
           onExecute:
             - echo "step - manual_approval"
@@ -27,6 +28,9 @@ pipelines:
         configuration:
           inputSteps:
             - name: slo_evaluation
+              status:
+                - success
+            - name: manual_approval
               status:
                 - success
         execution:
