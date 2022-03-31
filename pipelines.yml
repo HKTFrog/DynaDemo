@@ -17,7 +17,7 @@ pipelines:
             - name: incoming_webhook
         execution:
           onExecute:
-            - echo "$res_myIWH_payload" | jq '.' > payload.json
+            - echo "$res_incoming_webhook_payload" | jq '.' > payload.json
             - |
               add_run_variables my_payload="$(jq -n \
               --arg pr $(read_json payload.json "project") \
