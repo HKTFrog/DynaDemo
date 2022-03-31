@@ -5,8 +5,7 @@ resources:
       webhookName: MyIncomingWebhookIntegration
 
 pipelines:
-  - name: slo_pipeline
-    configuration:
+  - name: dynatrace_pipeline
 
     steps:
 
