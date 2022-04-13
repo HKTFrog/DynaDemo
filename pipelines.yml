@@ -22,7 +22,7 @@ pipelines:
               --arg sv $(read_json payload.json "service") \
               --arg sh $(read_json payload.json "shkeptncontext") \
               --arg id $(read_json payload.json "id") \
-              '{data:{project:$pr,stage:$st,service:$sv,status:"succeeded",result:"pass"},source:"cas-quickstart",specversion:"1.0",type:"sh.keptn.event.mytask-interactive.finished",shkeptncontext:$sh,triggeredid:$id}')"
+              '{data:{project:$pr,stage:$st,service:$sv,status:"succeeded",result:"pass"},source:"JFrog",specversion:"1.0",type:"sh.keptn.event.mytask-interactive.finished",shkeptncontext:$sh,triggeredid:$id}')"
             - echo "$my_payload"
             - echo "$step_url"
 
@@ -35,5 +35,5 @@ pipelines:
             - name: Processing_Incoming_Webhook
         execution:
           onExecute:
-            - echo "$int_DynaCred_BASE_URL"
-            - 'curl -X POST "https://pye55831.cloudautomation.live.dynatrace.com/api/v1/event" -H "accept: application/json" -H "x-token: $int_DynaCred_API_TOKEN" -H "Content-Type: application/json" -d "$my_payload"'
+            - echo "$int_DynaCred_BASE_URL/api/v1/event"
+            - 'curl -X POST "$int_DynaCred_BASE_URL/api/v1/event" -H "accept: application/json" -H "x-token: $int_DynaCred_API_TOKEN" -H "Content-Type: application/json" -d "$my_payload"'
