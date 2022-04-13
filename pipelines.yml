@@ -6,13 +6,10 @@ resources:
 
 pipelines:
   - name: dynatrace_pipeline
-
     steps:
-
       - name: Processing_Incoming_Webhook
         type: Bash
         configuration:
-          affinityGroup: Cloud_Automation_Interative_Webhook
           inputResources:
             - name: incoming_webhook
         execution:
@@ -32,11 +29,11 @@ pipelines:
       - name: Send_Finish_Event
         type: Bash
         configuration:
-          affinityGroup: Cloud_Automation_Interative_Webhook
           integrations:
             - name: DynaCred
           inputSteps:
             - name: Processing_Incoming_Webhook
         execution:
           onExecute:
+            - echo "$int_DynaCred_BASE_URL"
             - 'curl -X POST "https://pye55831.cloudautomation.live.dynatrace.com/api/v1/event" -H "accept: application/json" -H "x-token: $int_DynaCred_API_TOKEN" -H "Content-Type: application/json" -d "$my_payload"'
